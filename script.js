@@ -1,45 +1,18 @@
-const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcmMnH4yvxlsVlTnq31xbA5Hkdz1qiOYPFkZBehuOEhuPZUrft1njmvaVaIxwBDYsMXaV866Bc9bPD/pub?gid=0&single=true&output=csv";
-
-function getDevice() {
-  const ua = navigator.userAgent.toLowerCase();
-  if (/android/.test(ua)) return "android";
-  if (/iphone|ipad|ipod/.test(ua)) return "ios";
-  return "desktop";
-}
+const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRSRwejFfqe-DVvKcdGEOg6fjMHYeIJ3gdEGgco_W_O7ronNGhMXgDZGR9rR7__i5jE2JLu7pFWY208/pub?gid=0&single=true&output=csv";
 
 fetch(csvURL)
   .then(res => res.text())
   .then(text => {
-    const rows = text.trim().split("\n");
-    
-    // TOP HEADING - first row first column
-    const topHeading = rows[0].split(",")[0] || "Exclusive Offer";
-    document.getElementById("top-heading").innerText = topHeading;
+    const row = text.trim().split("\n")[1].split(",").map(x => x.trim());
 
-    // OFFERS - remaining rows
-    const dataRows = rows.slice(1);
-    const device = getDevice();
-    const container = document.getElementById("offers");
+    const title = row[0];
+    const subtitle = row[1];
+    const applyLink = row[2];
+    const buttonText = row[3];
 
-    dataRows.forEach(row => {
-      const [image,title,subtitle,button,android,ios,desktop] = row.split(",");
-
-      let link = desktop;
-      let btnText = button || "Continue";
-
-      if (device === "android") link = android;
-      if (device === "ios") link = ios;
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${image}">
-        <div class="card-content">
-          <h2>${title}</h2>
-          <p>${subtitle}</p>
-          <a class="btn" href="${link}" target="_blank">${btnText}</a>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  });
+    document.getElementById("mainTitle").innerText = title;
+    document.getElementById("subTitle").innerText = subtitle;
+    document.getElementById("applyBtn").innerText = buttonText;
+    document.getElementById("applyBtn").href = applyLink;
+  })
+  .catch(err => console.error("CSV Error:", err));
