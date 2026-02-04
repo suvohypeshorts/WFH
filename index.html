@@ -1,23 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Work From Home</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+
+<style>
+  *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+  }
+
+  .card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    padding:50px;
+    border-radius:20px;
+    max-width:600px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.4);
+  }
+
+  h1{
+    font-size:48px;
+    font-weight:800;
+    margin-bottom:15px;
+  }
+
+  p{
+    font-size:18px;
+    opacity:.9;
+    margin-bottom:35px;
+  }
+
+  button{
+    background:linear-gradient(135deg,#00ffcc,#00c6ff);
+    border:none;
+    padding:18px 50px;
+    font-size:20px;
+    font-weight:700;
+    border-radius:50px;
+    cursor:pointer;
+    transition:.3s;
+  }
+
+  button:hover{
+    transform:scale(1.05);
+    box-shadow:0 15px 40px rgba(0,198,255,.6);
+  }
+
+  .hidden{
+    display:none;
+  }
+</style>
 </head>
+
 <body>
 
-<section class="hero">
-  <h1 id="title">WORK FROM HOME</h1>
-  <p id="subtitle">Earn from anywhere</p>
-  <a id="btn" class="btn" href="#" target="_blank">APPLY NOW</a>
-</section>
+<div class="card">
+  <h1 id="title" class="hidden"></h1>
+  <p id="subtitle" class="hidden"></p>
+  <button id="applyBtn" class="hidden"></button>
+</div>
 
 <script>
-  const PAGE_TYPE = "landing";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRSRwejFfqe-DVvKcdGEOg6fjMHYeIJ3gdEGgco_W_O7ronNGhMXgDZGR9rR7__i5jE2JLu7pFWY208/pub?gid=0&single=true&output=csv";
+
+let step = 1;
+let step1Link = "";
+let step2Link = "";
+
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(csv => {
+    const lines = csv.split("\n");
+    const data = lines[1].split(",");
+
+    const titleText    = data[0]?.trim();
+    const subtitleText = data[1]?.trim();
+    const buttonText   = data[2]?.trim();
+    step1Link          = data[3]?.trim();
+    step2Link          = data[4]?.trim();
+
+    if(titleText){
+      const t = document.getElementById("title");
+      t.innerText = titleText;
+      t.classList.remove("hidden");
+    }
+
+    if(subtitleText){
+      const s = document.getElementById("subtitle");
+      s.innerText = subtitleText;
+      s.classList.remove("hidden");
+    }
+
+    if(buttonText){
+      const b = document.getElementById("applyBtn");
+      b.innerText = buttonText;
+      b.classList.remove("hidden");
+    }
+  });
+
+document.getElementById("applyBtn").addEventListener("click",()=>{
+  if(step === 1 && step1Link){
+    window.open(step1Link,"_blank");
+    step = 2;
+  } 
+  else if(step === 2 && step2Link){
+    window.location.href = step2Link;
+  }
+});
 </script>
-<script src="script.js"></script>
 
 </body>
 </html>
